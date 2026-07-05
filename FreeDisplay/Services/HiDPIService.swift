@@ -126,8 +126,12 @@ final class HiDPIService: @unchecked Sendable {
     /// Executes a shell command with administrator privileges via AppleScript.
     /// Returns nil on success, or an error message on failure.
     private func executePrivilegedCommand(_ command: String) -> String? {
+        let escapedCommand = command
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+
         let script = """
-            do shell script "\(command)" with administrator privileges
+            do shell script "\(escapedCommand)" with administrator privileges
             """
         var error: NSDictionary?
         guard let appleScript = NSAppleScript(source: script) else {
